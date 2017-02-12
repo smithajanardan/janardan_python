@@ -1,127 +1,112 @@
 #  File: MagicSquare.py
 
-#  Description: Tests an input file to validate if each matrix is a perfect square.
+#  Description: Creates a magic square of a given size.
 
-#  Student Name: Smitha Janardan
+#  Student's Name: Smitha Janardan
 
-#  Student UT EID: ssj398
+#  Student's UT EID: ssj398
+ 
+#  Course Name: CS 313E 
 
-#  Course Name: CS 303E
+#  Unique Number: 53330
 
-#  Unique Number: 52220
+#  Date Created: 02/01/11
 
-#  Date Created: 11/02/10
+#  Date Last Modified: 02/03/11
 
-#  Date Last Modified: 11/03/10
+# Populate a 2-D list with numbers from 1 to n2
+def makeSquare ( n ):
+  square = []
+  for i in range (n):
+    a = []
+    for j in range (n):
+      a.append (0)
+    square.append(a)
+  row = n-1
+  column = n/2
+  square [row][column] = 1
+  for i in range (2,(n**2)+1):
+    row2 = row
+    row += 1
+    if row >= n:
+      row += -n
+    column2 = column
+    column += 1
+    if column >= n:
+      column += -n
+    if square[row][column] != 0:
+      square[row2-1][column2] = i
+      row = row2-1
+      column = column2
+    else:
+      square[row][column] = i
+  return square
 
-#import necessary libraries
-import string
-import sys
+# Print the magic square in a neat format where the numbers
+# are right justified
+def printSquare ( magicSquare ):
+  print
+  for elt in magicSquare:
+    for item in elt:
+      print str(item).rjust(4),
+    print
 
-#isMagic function: returns true if matrix is magic. input: 2-D list. output: True/False retriction: must be square matrix
-def isMagic(b):
-  n = len(b) 
 
-#checks to see that each number is not repeated
-  new = []
-  for i in b:
-    for j in i:
-      new.append(j)
-  for i in new:
-    if new.count(i) > 1:
-      return False
+# Check that the 2-D list generated is indeed a magic square
+def checkSquare ( magicSquare, n ):
 
 #calculating the goal sum of each row/column/diagonal
-  sum = 0
-  for i in b:
-    for j in i:
-      sum += int(j)
-  sum = sum / n
+  print
+  sum = n * (n**2 + 1) / 2
 
 #calculating the sum of each row
-  for elt in b:
+  for elt in magicSquare:
     s = 0
     for item in elt:
-      s += int(item)
+      s += item
     if s != sum:
-        return False
+        print "error"
+  print "Sum of row = ", s
 
 #calculating the sum of each column
   for i in range (n):
     s = 0
     for j in range (n):
-      s += int(b[j][i])
+      s += magicSquare[j][i]
     if s != sum:
-      return False
+      print "error"
+  print "Sum of column = ", s
 
 #calculating the sum of each diagonal
   s = 0
   for i in range (n):
-    s += int(b[i][i])
+    s += magicSquare[i][i]
   if s != sum:
-    return False
+    print "error"
+  print "Sum diagonal (UL to LR) = ", s
   s = 0
   for i in range (n):
-    s += int(b[i][n-1-i])
+    s += magicSquare[i][n-1-i]
   if s != sum:
-    return False
-  return True
+    print "error"
+  print "Sum diagonal (UR to LL) = ", s
 
-#main function: prints verification to output file. input: name of input and output file. output: verifications written to output file
+
 def main():
+  # Prompt the user to enter an odd number 3 or greater
+  n = input("Please enter an odd integer that is 3 or greater: ")
 
-#enetering file names
-  infile = raw_input ("Enter name of input file: ")
-  outfile = raw_input ("Enter name of output file: ")
+  # Check the user input
+  while n % 2 != 1 or n < 3:
+    n = input("Please enter an ODD INTEGER that is 3 or GREATER: ")
 
-#error message note
-  if infile == outfile:
-    print "Error: input file name and output file name same"
-    sys.exit()
+  # Create the magic square
+  square = makeSquare (n)
 
-#opening and reading the file
-  input = open (infile, "r")
-  content = input.read()
-  idx = content.find("\n")
-  num = int(content[0])
-  output = open (outfile, "w")
+  # Print the magic square
+  printSquare (square)
 
-#begin writing the output file
-  output.write(content[0:3])
-  content = content[2:]
-
-#loop to seperate the different matrices
-  while num > 0:
-    content = content[1:]
-    dim = int(content[0])
-    origdim = content[0]
-    start = 0
-    idx = 0
-    b = []
-    content = content[2:]
-
-#loop to make each martix a list
-    while dim > 0:
-      idx = content.find("\n",idx+1)
-      line = content[start:idx].split()
-      b.append(line)
-      dim = dim - 1
-      start = idx + 1
-
-#placing each matrix through function
-    if isMagic(b):
-      a = "valid"
-    else:
-      a = "invalid"
-
-#Writing everything to the output file
-    output.write(origdim + " " + a + "\n" + content[:idx+1] + "\n")
-    content = content[idx+1:]
-    num = num - 1
-  input.close()
-  output.close()
-
-#printing final statement
-  print "\n" + "The output has been written to %s" % outfile
+  # Verify that it is a magic square
+  checkSquare (square, n)
 
 main()
